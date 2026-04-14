@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  # ####################################################################
+  # DATABASE SERVICE
+  # ####################################################################
+  lms-db:
+    image: mariadb:10.11
+    container_name: lms-db
+    restart: unless-stopped
+    networks:
+      - lms-prod-net
+    volumes:
+      - lms-db-volume:/var/lib/mysql
+    environment:
+      # Injecting SECURE credentials from external .env file
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+
+  # ####################################################################
+  # WEB APPLICATION SERVICE
+  # ####################################################################
+  lms-web:
+    build: docker/ 
+    image: jkpatelnx/devsecops-lms-web:latest
+    container_name: lms-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - lms-prod-net
+    volumes:
+      - lms-moodle-data-volume:/var/www/data
+      - lms-moodle-code-volume:/var/www/html/sites/moodle
+    depends_on:
+      - lms-db 
+    environment:
+      DB_HOST: "lms-db"
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASS: "${DB_PASS}"
+      WEBSITE_ADDRESS: "${WEBSITE_ADDRESS}"
+
+#####################################################################
+# EXPLICIT INFRASTRUCTURE DECLARATIONS
+#####################################################################
+networks:
+  lms-prod-net:
+    driver: bridge
+
+volumes:
+  lms-db-volume:
+  lms-moodle-data-volume:
+  lms-moodle-code-volume:
+
