@@ -15,27 +15,34 @@ PROTOCOL=${PROTOCOL:-"http://"}
 echo "### Setting up runtime configurations ###"
 
 # 1. Update moodle.conf with the runtime WEBSITE_ADDRESS
-cat <<EOF > /etc/apache2/sites-available/moodle.conf
-<VirtualHost *:80>
-    ServerName ${WEBSITE_ADDRESS}
-    ServerAlias www.${WEBSITE_ADDRESS}
-    DocumentRoot  ${MOODLE_CODE_FOLDER}/public
-    <Directory /var/www/html/sites>
-        Options FollowSymLinks
-        AllowOverride None
-        Require all granted
-        DirectoryIndex index.php index.html
-        FallbackResource /r.php
-    </Directory>
-    <FilesMatch "\.php$">
-        SetHandler "proxy:unix:/run/php/php8.3-fpm.sock|fcgi://localhost/"
-    </FilesMatch>
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
+cat <<EOF > /etc/nginx/sites-available/moodle.conf
+server {
+    listen 80;
+    server_name ${WEBSITE_ADDRESS} www.${WEBSITE_ADDRESS};
+    root ${MOODLE_CODE_FOLDER}/public;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args /r.php;
+    }
+
+    location ~ [^/]\.php(/|$) {
+        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
 EOF
 
-a2ensite moodle.conf > /dev/null
+ln -sf /etc/nginx/sites-available/moodle.conf /etc/nginx/sites-enabled/moodle.conf
+rm -f /etc/nginx/sites-enabled/default
 
 # 2. Start Process Services
 echo "Starting PHP-FPM..."
@@ -99,18 +106,11 @@ else
     echo "Moodle is already installed in the remote database. Skipping initialization."
 fi
 
-# 5. Start Apache in Foreground
-echo "Starting Apache Web Server..."
+# 5. Start Nginx in Foreground
+echo "Starting Nginx Web Server..."
 
-export APACHE_RUN_DIR="/var/run/apache2"
-export APACHE_RUN_USER="www-data"
-export APACHE_RUN_GROUP="www-data"
-export APACHE_LOG_DIR="/var/log/apache2"
-export APACHE_LOCK_DIR="/var/lock/apache2"
-export APACHE_PID_FILE="/var/run/apache2/apache2.pid"
+# Ensure Nginx uses www-data
+chown -R www-data:www-data /var/lib/nginx || true
+chown -R www-data:www-data /var/log/nginx || true
 
-mkdir -p "$APACHE_RUN_DIR" "$APACHE_LOCK_DIR" "$APACHE_LOG_DIR"
-chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APACHE_RUN_DIR" "$APACHE_LOCK_DIR" "$APACHE_LOG_DIR"
-
-exec /usr/sbin/apache2 -D FOREGROUND
-
+exec nginx -g "daemon off;"
