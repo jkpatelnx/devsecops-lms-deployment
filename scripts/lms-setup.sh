@@ -41,48 +41,47 @@ aspell git clamav ghostscript composer
 # Install a Webserver
 ####################################################################
 
-# --- 4. Install and Configure Apache (Option 1) ---
-sudo apt-get install -y apache2 libapache2-mod-fcgid
-sudo a2enmod proxy_fcgi setenvif rewrite
+# --- 4.  Install Nginx as your Webserver ---
+sudo apt-get install -y nginx
 
-sudo tee /etc/apache2/sites-available/moodle.conf > /dev/null <<EOF
-<VirtualHost *:80>
-    ServerName $WEBSITE_ADDRESS
-    ServerAlias www.$WEBSITE_ADDRESS
-    DocumentRoot  $MOODLE_CODE_FOLDER/public
-    <Directory $MOODLE_PATH>
-        Options FollowSymLinks
-        AllowOverride None
-        Require all granted
-        DirectoryIndex index.php index.html
-        # Enable fallback routing for URLs not matching files/directories
-        FallbackResource /r.php
-    </Directory>
-    # PHP-FPM 8.3 FastCGI handler via Unix socket
-    <FilesMatch "\.php$">
-        SetHandler "proxy:unix:/run/php/php8.3-fpm.sock|fcgi://localhost/"
-    </FilesMatch>
-    # Log files
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
+sudo tee /etc/nginx/sites-available/moodle.conf > /dev/null <<EOF
+server {
+    listen 80;
+    server_name $WEBSITE_ADDRESS www.$WEBSITE_ADDRESS;
+    root $MOODLE_CODE_FOLDER/public;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args /r.php;
+    }
+
+    location ~ [^/]\.php(/|$) {
+        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
 EOF
 
-sudo a2ensite moodle.conf
-sudo a2dissite 000-default.conf
-sudo systemctl reload apache2
+sudo ln -s /etc/nginx/sites-available/moodle.conf /etc/nginx/sites-enabled/moodle.conf
+sudo systemctl reload nginx
 
 # --- 5. Configure PHP Settings ---
 sudo systemctl enable --now php8.3-fpm
 
-php_ini_apache="/etc/php/8.3/fpm/php.ini"
-php_ini_cli="/etc/php/8.3/cli/php.ini"
-
-for ini in "$php_ini_apache" "$php_ini_cli"; do
-    sudo sed -i 's/^[[:space:]]*;*[[:space:]]*max_input_vars[[:space:]]*=.*/max_input_vars = 5000/' "$ini"
-    sudo sed -i 's/^\s*post_max_size\s*=.*/post_max_size = 256M/' "$ini"
-    sudo sed -i 's/^\s*upload_max_filesize\s*=.*/upload_max_filesize = 256M/' "$ini"
-done
+sudo sed -i 's/^;max_input_vars =.*/max_input_vars = 5000/' /etc/php/8.3/fpm/php.ini
+sudo sed -i 's/^;max_input_vars =.*/max_input_vars = 5000/' /etc/php/8.3/cli/php.ini
+sudo sed -i 's/^post_max_size =.*/post_max_size = 256M/' /etc/php/8.3/fpm/php.ini
+sudo sed -i 's/^post_max_size =.*/post_max_size = 256M/' /etc/php/8.3/cli/php.ini
+sudo sed -i 's/^upload_max_filesize =.*/upload_max_filesize = 256M/' /etc/php/8.3/fpm/php.ini
+sudo sed -i 's/^upload_max_filesize =.*/upload_max_filesize = 256M/' /etc/php/8.3/cli/php.ini
 
 sudo systemctl reload php8.3-fpm
 
@@ -91,7 +90,7 @@ sudo systemctl reload php8.3-fpm
 ####################################################################
 
 # --- 6. Obtain Moodle Code via Git ---
-sudo git clone -b v5.1.0 https://github.com/moodle/moodle.git $MOODLE_CODE_FOLDER
+sudo git clone --depth 1 -b v5.1.0 https://github.com/moodle/moodle.git $MOODLE_CODE_FOLDER
 sudo chown -R www-data:www-data $MOODLE_CODE_FOLDER
 
 # Composer Install
@@ -174,4 +173,3 @@ echo "Admin Password: $MOODLE_ADMIN_PASSWORD"
 echo "Database Password: $MYSQL_MOODLEUSER_PASSWORD"
 echo "------------------------------------------------------------"
 echo "Remember to change the admin email and site name via the web UI."
-
