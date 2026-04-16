@@ -24,7 +24,7 @@ services:
   # WEB APPLICATION SERVICE
   # ####################################################################
   lms-web:
-    build: docker/ 
+    build: app/ 
     image: jkpatelnx/devsecops-lms-web:latest
     container_name: lms-web
     restart: unless-stopped
