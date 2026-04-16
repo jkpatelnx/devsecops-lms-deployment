@@ -28,8 +28,8 @@ services:
     image: jkpatelnx/devsecops-lms-web:latest
     container_name: lms-web
     restart: unless-stopped
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     networks:
       - lms-prod-net
     volumes:
@@ -43,6 +43,27 @@ services:
       DB_USER: "${DB_USER}"
       DB_PASS: "${DB_PASS}"
       WEBSITE_ADDRESS: "${WEBSITE_ADDRESS}"
+      PROTOCOL: "${PROTOCOL}"
+
+  # ####################################################################
+  # REVERSE PROXY SERVICE
+  # ####################################################################
+  lms-proxy:
+    build: proxy/
+    image: jkpatelnx/devsecops-lms-proxy:latest
+    container_name: lms-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - lms-prod-net
+    depends_on:
+      - lms-web
+    environment:
+      WEBSITE_ADDRESS: "${WEBSITE_ADDRESS}"
+    volumes:
+      - lms-proxy-certs-volume:/etc/nginx/certs
 
 #####################################################################
 # EXPLICIT INFRASTRUCTURE DECLARATIONS
@@ -55,4 +76,4 @@ volumes:
   lms-db-volume:
   lms-moodle-data-volume:
   lms-moodle-code-volume:
-
+  lms-proxy-certs-volume:
