@@ -12,15 +12,51 @@ DB_PASS=${DB_PASS:-"dbpassword!"}
 WEBSITE_ADDRESS=${WEBSITE_ADDRESS:-"localhost"}
 PROTOCOL=${PROTOCOL:-"http://"}
 
+SERVER_NAMES="$WEBSITE_ADDRESS"
+if [[ ! "$WEBSITE_ADDRESS" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    SERVER_NAMES="$SERVER_NAMES www.$WEBSITE_ADDRESS"
+fi
+
+set_cfg_string() {
+    local key="$1"
+    local value="$2"
+    local file="$3"
+    local escaped_value
+    escaped_value=$(printf '%s' "$value" | sed 's/[&|]/\\&/g')
+
+    if grep -Eq "^[[:space:]]*\\\$CFG->$key[[:space:]]*=" "$file"; then
+        sed -i "s|^[[:space:]]*\\\$CFG->$key[[:space:]]*=.*|\\\$CFG->$key = '$escaped_value';|" "$file"
+    else
+        sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \\\$CFG->$key = '$escaped_value';" "$file"
+    fi
+}
+
+set_cfg_bool() {
+    local key="$1"
+    local value="$2"
+    local file="$3"
+
+    if grep -Eq "^[[:space:]]*\\\$CFG->$key[[:space:]]*=" "$file"; then
+        sed -i "s|^[[:space:]]*\\\$CFG->$key[[:space:]]*=.*|\\\$CFG->$key = $value;|" "$file"
+    else
+        sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \\\$CFG->$key = $value;" "$file"
+    fi
+}
+
 echo "### Setting up runtime configurations ###"
 
 # 1. Update moodle.conf with the runtime WEBSITE_ADDRESS
 cat <<EOF > /etc/nginx/sites-available/moodle.conf
 server {
     listen 80;
-    server_name ${WEBSITE_ADDRESS} www.${WEBSITE_ADDRESS};
+    server_name ${SERVER_NAMES};
     root ${MOODLE_CODE_FOLDER}/public;
     index index.php index.html index.htm;
+
+    set \$fcgi_https off;
+    if (\$http_x_forwarded_proto = "https") {
+        set \$fcgi_https on;
+    }
 
     location / {
         try_files \$uri \$uri/ /index.php?\$args /r.php;
@@ -32,6 +68,10 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param PATH_INFO \$fastcgi_path_info;
+        fastcgi_param HTTPS \$fcgi_https;
+        fastcgi_param HTTP_X_FORWARDED_PROTO \$http_x_forwarded_proto;
+        fastcgi_param HTTP_X_FORWARDED_HOST \$http_x_forwarded_host;
+        fastcgi_param HTTP_X_FORWARDED_FOR \$http_x_forwarded_for;
         fastcgi_pass unix:/run/php/php8.3-fpm.sock;
     }
 
@@ -104,6 +144,21 @@ if ! mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "USE $DB_NAME; SHOW TABLE
     echo "Admin Password: $MOODLE_ADMIN_PASSWORD" > $MOODLE_DATA_FOLDER/moodle_credentials.txt
 else
     echo "Moodle is already installed in the remote database. Skipping initialization."
+fi
+
+if [ -f "$MOODLE_CODE_FOLDER/config.php" ]; then
+    set_cfg_string "wwwroot" "${PROTOCOL}${WEBSITE_ADDRESS}" "$MOODLE_CODE_FOLDER/config.php"
+    set_cfg_bool "slasharguments" "false" "$MOODLE_CODE_FOLDER/config.php"
+
+    if [ "$PROTOCOL" = "https://" ]; then
+        set_cfg_bool "sslproxy" "true" "$MOODLE_CODE_FOLDER/config.php"
+    else
+        set_cfg_bool "sslproxy" "false" "$MOODLE_CODE_FOLDER/config.php"
+    fi
+
+    # Standard TLS termination at the edge proxy only needs sslproxy.
+    # Moodle's reverseproxy mode is for more specialised proxy/load-balancer setups.
+    set_cfg_bool "reverseproxy" "false" "$MOODLE_CODE_FOLDER/config.php"
 fi
 
 # 5. Start Nginx in Foreground
