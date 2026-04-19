@@ -76,7 +76,8 @@ if [[ "$LOCAL_KEEP_LAST" =~ ^[0-9]+$ ]] && [[ "$LOCAL_KEEP_LAST" -gt 0 ]]; then
   # Delete old backup directories and matching archive files.
   while IFS= read -r old_ts; do
     [[ -z "$old_ts" ]] && continue
-    rm -rf "$BACKUP_ROOT/$old_ts"
+    rm -rf "${BACKUP_ROOT:?}/${old_ts:?}"
+    
     old_archive="$BACKUP_ROOT/lms-backup-${old_ts}.tar.gz"
     if [[ -f "$old_archive" ]]; then
       rm -f "$old_archive"
