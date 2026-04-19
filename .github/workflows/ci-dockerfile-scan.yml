@@ -1,0 +1,31 @@
+# Dockerfile Linting
+
+name: "Dockerfile Lint (Hadolint)"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  dockerfile-scan:
+    name: "Dockerfile scan using Hadolint"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Hadolint — app/Dockerfile"
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: app/Dockerfile
+
+      - name: "Hadolint — proxy/Dockerfile"
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: proxy/Dockerfile
+          
