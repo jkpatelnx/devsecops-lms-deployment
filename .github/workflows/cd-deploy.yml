@@ -1,0 +1,36 @@
+# Pull & deploy using docker compose
+
+name: "cd deploy"
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  deply:
+    name: "Deploy to EC2 Production"
+    runs-on: self-hosted
+
+    steps:
+
+      - name: "Checkout the code"
+        uses: actions/checkout@v4
+        
+      - name: "Create .env file from GitHub Secrets"
+        run: |
+          cat <<EOF > .env
+          DB_ROOT_PASS=${{ secrets.DB_ROOT_PASS }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASS=${{ secrets.DB_PASS }}
+          WEBSITE_ADDRESS=${{ secrets.WEBSITE_ADDRESS }}
+          PROTOCOL=${{ secrets.PROTOCOL }}
+          EOF
+
+      - name: "deploy with docker compose"
+        run: docker compose down && docker compose up -d --force-recreate --pull always
+        
