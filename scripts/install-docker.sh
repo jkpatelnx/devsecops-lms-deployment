@@ -18,5 +18,3 @@ sudo usermod -aG docker "$RUNNER_USER"
 echo "######### Verifying installation #########"
 docker --version
 docker compose version
-
-sudo reboot 
