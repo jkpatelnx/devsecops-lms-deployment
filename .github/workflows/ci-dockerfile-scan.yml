@@ -1,6 +1,7 @@
-# Dockerfile Linting
+# Dockerfile Linting 
+# Hadolint — Dockerfile linter based on CIS Docker Benchmark
 
-name: "Dockerfile Lint (Hadolint)"
+name: "ci dockerfile scan"
 
 on:
   push:
@@ -23,9 +24,11 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: app/Dockerfile
+          failure-threshold: error
 
       - name: "Hadolint — proxy/Dockerfile"
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: proxy/Dockerfile
+          failure-threshold: error
           
