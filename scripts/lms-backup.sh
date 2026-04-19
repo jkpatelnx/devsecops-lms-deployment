@@ -27,13 +27,36 @@ echo "Backup folder: $BACKUP_DIR"
 
 cd "$PROJECT_DIR"
 
+# Detect the docker compose project name.
+# Docker Compose prefixes every volume with this name, e.g.:
+#   project = devsecops-lms-deployment
+#   actual volume = devsecops-lms-deployment_lms-moodle-data-volume
+# Without the prefix, docker run mounts a DIFFERENT (empty) volume!
+COMPOSE_PROJECT=$(docker compose config 2>/dev/null | awk '/^name:/{print $2; exit}')
+if [[ -z "$COMPOSE_PROJECT" ]]; then
+  echo "ERROR: Could not detect docker compose project name."
+  echo "       Make sure you are running this script from the project directory."
+  exit 1
+fi
+echo "Compose project name: $COMPOSE_PROJECT"
+
 # 1) Database dump from lms-db container
 docker compose exec -T lms-db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' > "$BACKUP_DIR/mariadb.sql"
 gzip "$BACKUP_DIR/mariadb.sql"
+echo "  [OK] Database dump: mariadb.sql.gz"
 
-# 2) Backup important named volumes
+# 2) Backup important named volumes using FULL prefixed volume names.
+#    lms-db-volume raw tar is kept as an emergency reference ONLY.
+#    Database should always be restored via the SQL dump (mariadb.sql.gz).
 for vol in lms-db-volume lms-moodle-data-volume lms-moodle-code-volume lms-proxy-certs-volume; do
-  docker run --rm -v "$vol":/from:ro -v "$BACKUP_DIR":/to alpine:3.20 sh -c "cd /from && tar czf /to/${vol}.tar.gz ."
+  full_vol="${COMPOSE_PROJECT}_${vol}"
+  if docker volume inspect "$full_vol" > /dev/null 2>&1; then
+    docker run --rm -v "$full_vol":/from:ro -v "$BACKUP_DIR":/to alpine:3.20 \
+      sh -c "cd /from && tar czf /to/${vol}.tar.gz ."
+    echo "  [OK] Volume backed up: $full_vol -> ${vol}.tar.gz"
+  else
+    echo "  WARN: Volume not found, skipped: $full_vol"
+  fi
 done
 
 # 3) Backup compose and env files

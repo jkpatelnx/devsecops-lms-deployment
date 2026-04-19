@@ -161,7 +161,36 @@ if [ -f "$MOODLE_CODE_FOLDER/config.php" ]; then
     set_cfg_bool "reverseproxy" "false" "$MOODLE_CODE_FOLDER/config.php"
 fi
 
-# 5. Start Nginx in Foreground
+# 5. Repair ownership & permissions (always, not just on fresh install)
+#
+# WHY THIS IS NEEDED:
+#   When you restore from backup, the tar extraction inside an alpine
+#   container can land files with wrong numeric UIDs. nginx and php-fpm
+#   both run as www-data (UID 33). If they can't read the moodle code
+#   volume or the moodledata volume, you get 403 / "Permission denied"
+#   errors for logos, profile pictures, and any uploaded files.
+#
+#   Running this block unconditionally means every container startup
+#   (fresh install or restore) guarantees correct permissions before
+#   nginx opens its sockets.
+echo "Repairing ownership on Moodle directories..."
+
+# Moodle code: www-data readable, NOT writable (security requirement)
+find "$MOODLE_CODE_FOLDER" -type d -exec chmod 755 {} \;
+find "$MOODLE_CODE_FOLDER" -type f -exec chmod 644 {} \;
+chown -R www-data:www-data "$MOODLE_CODE_FOLDER"
+
+# Moodle data (uploaded files, logos, sessions, cache): www-data owns everything
+# Permissions: dirs=700, files=600 applied to the entire data volume root.
+# Moodle reads logos/favicons from moodledata/filedir/ as www-data \u2014
+# without correct file permissions those reads fail with "permission problem".
+chown -R www-data:www-data "$MOODLE_DATA_FOLDER"
+find "$MOODLE_DATA_FOLDER" -type d -exec chmod 700 {} \; 2>/dev/null || true
+find "$MOODLE_DATA_FOLDER" -type f -exec chmod 600 {} \; 2>/dev/null || true
+
+echo "Ownership repair complete."
+
+# 6. Start Nginx in Foreground
 echo "Starting Nginx Web Server..."
 
 # Ensure Nginx uses www-data
