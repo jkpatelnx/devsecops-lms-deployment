@@ -15,7 +15,7 @@ BACKUP_DIR="$BACKUP_ROOT/$TIMESTAMP"
 #   export S3_KEEP_LAST=3
 #   export LOCAL_KEEP_LAST=3
 #   sudo -E ./scripts/lms-backup.sh
-S3_BUCKET="${S3_BUCKET:-}"
+S3_BUCKET="${S3_BUCKET:-lms-backup-jitendra-prod-2026}"
 S3_PREFIX="${S3_PREFIX:-lms}"
 S3_KEEP_LAST="${S3_KEEP_LAST:-3}"
 LOCAL_KEEP_LAST="${LOCAL_KEEP_LAST:-3}"
