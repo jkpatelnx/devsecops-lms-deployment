@@ -1,0 +1,27 @@
+# Shell Script Security Scan
+# ShellCheck — static analysis for bash/sh scripts
+
+name: "ci shell script scan"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  shell-script-scan:
+    name: "Shell Script Scan (ShellCheck)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "ShellCheck — all shell scripts"
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
+      
