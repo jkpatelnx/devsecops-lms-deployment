@@ -13,7 +13,7 @@ else
   echo "Docker installed."
 fi
 
-sudo usermod -aG docker "$RUNNER_USER"
+sudo usermod -aG docker "$RUNNER_USER" && newgrp docker
 
 echo "######### Verifying installation #########"
 docker --version
