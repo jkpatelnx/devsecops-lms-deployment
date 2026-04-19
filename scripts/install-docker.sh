@@ -14,11 +14,9 @@ else
 fi
 
 sudo usermod -aG docker "$RUNNER_USER"
-# Fix socket permissions
-sudo chown root:docker /var/run/docker.sock
-sudo chmod 660 /var/run/docker.sock
-
 
 echo "######### Verifying installation #########"
 docker --version
 docker compose version
+
+sudo reboot 
