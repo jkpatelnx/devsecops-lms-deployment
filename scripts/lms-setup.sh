@@ -14,7 +14,7 @@ set -e # Exit immediately if a command exits with a non-zero status
 
 # --- Variables & Input ---
 PROTOCOL="http://"
-read -p "Enter the web address (no http://, e.g., mymoodle123.com or 192.168.1.1): " WEBSITE_ADDRESS
+read -r -p "Enter the web address (no http://, e.g., mymoodle123.com or 192.168.1.1): " WEBSITE_ADDRESS
 
 MOODLE_PATH="/var/www/html/sites"
 MOODLE_CODE_FOLDER="$MOODLE_PATH/moodle"
