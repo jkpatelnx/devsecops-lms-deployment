@@ -24,6 +24,7 @@ jobs:
   build-scan-push:
     needs: [secret-scan, shell-script-scan, dockerfile-scan]
     uses: ./.github/workflows/ci-build-scan-push.yml
+    secrets: inherit
 
   # CD
   
