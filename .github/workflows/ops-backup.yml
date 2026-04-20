@@ -1,6 +1,6 @@
 # Backup to S3 
 
-name: "cd backup to s3"
+name: "💾 Ops · S3 Backup"
 
 on:
   #push:
