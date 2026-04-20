@@ -3,7 +3,7 @@
 # install docker 
 sudo apt update -y 
 sudo apt install -y docker.io docker-compose-v2 
-sudo usermod -aG docker ${SUDO_USER:-$USER}"
+sudo usermod -aG docker ${SUDO_USER:-$USER}
 
 # install aws cli
 sudo apt install -y unzip
