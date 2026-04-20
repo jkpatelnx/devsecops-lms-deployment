@@ -21,6 +21,9 @@ jobs:
 
       - name: "Download backup from S3 and restore"
         run: |
+          export IMAGE_TAG="${{ github.sha }}"
+          export IMAGE_TAG="${IMAGE_TAG::7}"
+          
           export S3_BUCKET="${{ secrets.S3_BUCKET }}"
           export S3_PREFIX="${{ secrets.S3_PREFIX }}"
           export S3_KEEP_LAST="${{ secrets.S3_KEEP_LAST }}"
