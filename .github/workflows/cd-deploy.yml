@@ -23,16 +23,22 @@ jobs:
           
       - name: "deploy with docker compose"
         run: |
-          cat <<EOF > .env
-          DB_ROOT_PASS="${{ secrets.DB_ROOT_PASS }}"
-          DB_NAME="${{ secrets.DB_NAME }}"
-          DB_USER="${{ secrets.DB_USER }}"
-          DB_PASS="${{ secrets.DB_PASS }}"
-          WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
-          PROTOCOL="${{ secrets.PROTOCOL }}"
-          EOF
+          #cat <<EOF > .env
+          #DB_ROOT_PASS="${{ secrets.DB_ROOT_PASS }}"
+          #DB_NAME="${{ secrets.DB_NAME }}"
+          #DB_USER="${{ secrets.DB_USER }}"
+          #DB_PASS="${{ secrets.DB_PASS }}"
+          #WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
+          #PROTOCOL="${{ secrets.PROTOCOL }}"
+          #EOF
+          #chmod 600 .env
 
-          chmod 600 .env
+          export DB_ROOT_PASS="${{ secrets.DB_ROOT_PASS }}"
+          export DB_NAME="${{ secrets.DB_NAME }}"
+          export DB_USER="${{ secrets.DB_USER }}"
+          export DB_PASS="${{ secrets.DB_PASS }}"
+          export WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
+          export PROTOCOL="${{ secrets.PROTOCOL }}"
 
           ###### deploy with docker compose"
           
