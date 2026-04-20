@@ -1,0 +1,31 @@
+# Backup on S3
+
+name: "backup"
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  backup:
+    name: "Backup on S3"
+    runs-on: self-hosted
+
+    steps:
+      - name: "Checkout source"
+        uses: actions/checkout@v4
+        
+      - name: "Run lms-backup.sh"
+        run: |
+          export S3_BUCKET="${{ secrets.S3_BUCKET }}"
+          export S3_PREFIX="${{ secrets.S3_PREFIX }}"
+          export S3_KEEP_LAST="${{ secrets.S3_KEEP_LAST }}"
+          export LOCAL_KEEP_LAST="3"
+          chmod +x scripts/lms-backup.sh
+          sudo -E ./scripts/lms-backup.sh
+
+          
