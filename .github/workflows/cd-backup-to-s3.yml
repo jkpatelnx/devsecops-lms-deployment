@@ -1,6 +1,6 @@
-# Backup on S3
+# Backup to S3 
 
-name: "backup"
+name: "cd backup to s3"
 
 on:
   #push:
@@ -12,7 +12,7 @@ on:
 jobs:
 
   backup:
-    name: "Backup on S3"
+    name: "Backup to S3"
     runs-on: self-hosted
 
     steps:
