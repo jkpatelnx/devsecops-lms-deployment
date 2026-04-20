@@ -23,6 +23,9 @@ jobs:
           
       - name: "deploy with docker compose"
         run: |
+          export IMAGE_TAG="${{ github.sha }}"
+          export IMAGE_TAG="${IMAGE_TAG::7}"
+        
           #cat <<EOF > .env
           #DB_ROOT_PASS="${{ secrets.DB_ROOT_PASS }}"
           #DB_NAME="${{ secrets.DB_NAME }}"
