@@ -1,6 +1,6 @@
 # runner-setup.yml
 
-name: "⚙️ Bootstrap — Install Docker & AWS CLI"
+name: "⚙️ Ops · Bootstrap EC2"
 
 on:
   #push:
