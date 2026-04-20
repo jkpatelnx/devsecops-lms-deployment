@@ -13,20 +13,20 @@ jobs:
   # CI 
 
   secret-scan:
-    uses: .github/workflows/ci-secret-scan.yml
+    uses: ./.github/workflows/ci-secret-scan.yml
     
   shell-script-scan:
-    uses: .github/workflows/ci-shell-script-scan.yml
+    uses: ./.github/workflows/ci-shell-script-scan.yml
     
   dockerfile-scan:
-    uses: .github/workflows/ci-dockerfile-scan.yml
+    uses: ./.github/workflows/ci-dockerfile-scan.yml
 
   # CD
   
   build-scan-push:
     needs: [secret-scan, shell-script-scan, dockerfile-scan]
-    uses: .github/workflows/cd-build-scan-push.yml
+    uses: ./.github/workflows/cd-build-scan-push.yml
     
   deploy:
     needs: [build-scan-push]
-    uses: .github/workflows/cd-deploy.yml
+    uses: ./.github/workflows/cd-deploy.yml
