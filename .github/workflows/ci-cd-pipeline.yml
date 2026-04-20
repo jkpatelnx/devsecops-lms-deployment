@@ -20,13 +20,13 @@ jobs:
     
   dockerfile-scan:
     uses: ./.github/workflows/ci-dockerfile-scan.yml
+   
+  build-scan-push:
+    needs: [secret-scan, shell-script-scan, dockerfile-scan]
+    uses: ./.github/workflows/ci-build-scan-push.yml
 
   # CD
   
-  build-scan-push:
-    needs: [secret-scan, shell-script-scan, dockerfile-scan]
-    uses: ./.github/workflows/cd-build-scan-push.yml
-    
   deploy:
     needs: [build-scan-push]
     uses: ./.github/workflows/cd-deploy.yml
