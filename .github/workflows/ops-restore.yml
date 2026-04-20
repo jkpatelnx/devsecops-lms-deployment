@@ -1,6 +1,6 @@
 # Restore from s3
 
-name: "cd restore from s3"
+name: "♻️ Ops · S3 Restore"
 
 on:
   #push:
