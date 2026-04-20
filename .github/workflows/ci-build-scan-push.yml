@@ -2,7 +2,7 @@
 # Trivy CVE scan (HIGH/CRITICAL = FAIL)
 # Push to Docker Hub 
 
-name: "ci build scan push"
+name: "CI / Build and Push"
 
 on:
   #push:

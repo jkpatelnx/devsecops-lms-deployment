@@ -1,7 +1,7 @@
 # Dockerfile Linting 
 # Hadolint — Dockerfile linter based on CIS Docker Benchmark
 
-name: "ci dockerfile scan"
+name: "CI / Dockerfile Lint"
 
 on:
   #push:

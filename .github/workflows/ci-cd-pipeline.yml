@@ -1,6 +1,6 @@
 # DevSecOps End To End Pipeline
 
-name: "ci/cd pipeline"
+name: "CI/CD / Pipeline"
 
 on:
   #push:

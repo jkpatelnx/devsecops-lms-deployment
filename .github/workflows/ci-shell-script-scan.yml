@@ -1,7 +1,7 @@
 # Shell Script Security Scan
 # ShellCheck — static analysis for bash/sh scripts
 
-name: "ci shell script scan"
+name: "CI / Shell Lint"
 
 on:
   #push:

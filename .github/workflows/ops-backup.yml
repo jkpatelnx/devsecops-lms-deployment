@@ -1,6 +1,6 @@
 # Backup to S3 
 
-name: "💾 Ops · S3 Backup"
+name: "Ops / S3 Backup"
 
 on:
   #push:

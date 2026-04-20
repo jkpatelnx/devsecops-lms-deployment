@@ -1,6 +1,6 @@
 # runner-setup.yml
 
-name: "⚙️ Ops · Bootstrap EC2"
+name: "Ops / Bootstrap Runner"
 
 on:
   #push:

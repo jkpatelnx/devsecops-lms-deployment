@@ -1,6 +1,6 @@
 # Pull & deploy using docker compose
 
-name: "🚢 CD · Deploy to EC2"
+name: "CD / Deploy to EC2"
 
 on:
   #push:
