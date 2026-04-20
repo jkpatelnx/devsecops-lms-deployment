@@ -20,8 +20,15 @@ jobs:
         uses: actions/checkout@v4
         
       - name: "install docker and aws cli"
+        continue-on-error: true          # Runner may disconnect on reboot — that is expected
         run: |
           chmod +x scripts/install-docker-aws-cli.sh
           sudo ./scripts/install-docker-aws-cli.sh
+
+      - name: "Verify installation"
+        run: |
+          docker --version
+          docker compose version
+          aws --version
        
       
