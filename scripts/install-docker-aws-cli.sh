@@ -27,7 +27,8 @@ fi
 
 #####  reboot only if docker/compose installed #####
 if [ "$NEED_REBOOT" = true ]; then
-  sudo reboot
+  if [ -n "$GITHUB_ACTIONS" ]; then
+    sudo shutdown -r +1 "Reboot scheduled by GitHub Actions"
 else
   echo "No reboot needed"
 fi
