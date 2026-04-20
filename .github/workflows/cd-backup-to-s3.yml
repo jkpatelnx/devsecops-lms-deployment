@@ -21,12 +21,12 @@ jobs:
         
       - name: "Run lms-backup.sh"
         run: |
-          export DB_ROOT_PASS=${{ secrets.DB_ROOT_PASS }}
-          export DB_NAME=${{ secrets.DB_NAME }}
-          export DB_USER=${{ secrets.DB_USER }}
-          export DB_PASS=${{ secrets.DB_PASS }}
-          export WEBSITE_ADDRESS=${{ secrets.WEBSITE_ADDRESS }}
-          export PROTOCOL=${{ secrets.PROTOCOL }}
+          export DB_ROOT_PASS="${{ secrets.DB_ROOT_PASS }}"
+          export DB_NAME="${{ secrets.DB_NAME }}"
+          export DB_USER="${{ secrets.DB_USER }}"
+          export DB_PASS="${{ secrets.DB_PASS }}"
+          export WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
+          export PROTOCOL="${{ secrets.PROTOCOL }}"
           
           export S3_BUCKET="${{ secrets.S3_BUCKET }}"
           export S3_PREFIX="${{ secrets.S3_PREFIX }}"
