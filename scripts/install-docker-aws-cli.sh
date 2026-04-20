@@ -17,19 +17,19 @@ fi
 #####  install aws cli #####
 if ! command -v aws >/dev/null 2>&1; then
   sudo apt install -y unzip
-
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   unzip awscliv2.zip
   sudo ./aws/install
+  rm -rf aws awscliv2.zip
 else
   echo "AWS CLI already installed"
 fi
 
 #####  reboot only if docker/compose installed #####
 if [ "$NEED_REBOOT" = true ]; then
-  if [ -n "$GITHUB_ACTIONS" ]; then
-    sudo shutdown -r +1 "Reboot scheduled by GitHub Actions"
-else
-  echo "No reboot needed"
+  echo "Reboot required — scheduling in background and exiting cleanly."
+  nohup bash -c "sleep 5 && shutdown -r now" >/dev/null 2>&1 &
+  exit 0
 fi
 
+echo "Setup complete. No reboot needed."
