@@ -31,3 +31,4 @@ jobs:
   deploy:
     needs: [build-scan-push]
     uses: ./.github/workflows/cd-deploy.yml
+    secrets: inherit
