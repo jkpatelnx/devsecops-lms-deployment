@@ -1,0 +1,28 @@
+# runner-setup.yml
+
+name: "setup runner"
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  #workflow_dispatch:
+  workflow_call:
+
+jobs:
+
+  setup-runner:
+    name: "install docker and aws cli"
+    runs-on: self-hosted
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        
+      - name: "install docker and aws cli"
+        run: |
+          chmod +x scripts/install-docker-aws-cli.sh
+          sudo ./scripts/install-docker-aws-cli.sh
+       
+      
