@@ -10,9 +10,6 @@ on:
   workflow_dispatch:
 
 jobs: 
-  # setup runner
-  setup-runner:
-    uses: ./.github/workflows/setup-runner.yml
 
   # CI 
   secret-scan:
@@ -25,12 +22,11 @@ jobs:
     uses: ./.github/workflows/ci-dockerfile-scan.yml
    
   build-scan-push:
-    needs: [setup-runner, secret-scan, shell-script-scan, dockerfile-scan]
+    needs: [secret-scan, shell-script-scan, dockerfile-scan]
     uses: ./.github/workflows/ci-build-scan-push.yml
     secrets: inherit
 
   # CD
-  
   deploy:
     needs: [build-scan-push]
     uses: ./.github/workflows/cd-deploy.yml
