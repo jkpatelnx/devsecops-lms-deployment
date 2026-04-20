@@ -25,7 +25,7 @@ services:
   # ####################################################################
   lms-web:
     build: app/ 
-    image: jkpatelnx/devsecops-lms-web:latest
+    image: jkpatelnx/devsecops-lms-web:${IMAGE_TAG:-latest}
     container_name: lms-web
     restart: unless-stopped
     expose:
@@ -50,7 +50,7 @@ services:
   # ####################################################################
   lms-proxy:
     build: proxy/
-    image: jkpatelnx/devsecops-lms-proxy:latest
+    image: jkpatelnx/devsecops-lms-proxy:${IMAGE_TAG:-latest}
     container_name: lms-proxy
     restart: unless-stopped
     ports:
