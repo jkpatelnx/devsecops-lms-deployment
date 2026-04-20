@@ -10,8 +10,11 @@ on:
   workflow_dispatch:
 
 jobs: 
-  # CI 
+  # setup runner
+  setup-runner:
+    uses: ./.github/workflows/setup-runner.yml
 
+  # CI 
   secret-scan:
     uses: ./.github/workflows/ci-secret-scan.yml
     
