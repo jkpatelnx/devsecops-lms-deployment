@@ -8,7 +8,7 @@ on:
   #    - main
   #pull_request:
   schedule:
-    - cron: '50 4 * * *'
+    - cron: '00 5 * * *'
   workflow_dispatch:
   
 
