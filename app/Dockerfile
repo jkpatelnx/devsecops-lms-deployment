@@ -13,7 +13,8 @@ RUN apt-get update && apt-get upgrade -y && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     mkdir -p /app/moodle && \
     mkdir -p /app/.cache/composer && \
-    git clone --depth 1 -b v5.1.0 https://github.com/moodle/moodle.git /app/moodle && \
+    #git clone --depth 1 -b v5.1.0 https://github.com/moodle/moodle.git /app/moodle && \
+    git clone --depth 1 -b main https://github.com/jkpatelnx/devsecops-lms-app.git /app/moodle && \
     rm -rf /app/moodle/.git && \
     cd /app/moodle && \
     COMPOSER_CACHE_DIR="/app/.cache/composer" composer install --no-dev --classmap-authoritative --ignore-platform-reqs && \
