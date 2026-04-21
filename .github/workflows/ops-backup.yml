@@ -39,7 +39,6 @@ jobs:
           chmod 600 /home/ubuntu/.env
           
           chmod +x scripts/lms-backup.sh
-          cp scripts/lms-backup.sh /home/ubuntu/lms-backup.sh
           sudo -E ./scripts/lms-backup.sh
 
          
