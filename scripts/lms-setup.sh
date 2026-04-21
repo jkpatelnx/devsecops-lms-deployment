@@ -90,7 +90,8 @@ sudo systemctl reload php8.3-fpm
 ####################################################################
 
 # --- 6. Obtain Moodle Code via Git ---
-sudo git clone --depth 1 -b v5.1.0 https://github.com/moodle/moodle.git $MOODLE_CODE_FOLDER
+#sudo git clone --depth 1 -b v5.1.0 https://github.com/moodle/moodle.git $MOODLE_CODE_FOLDER
+sudo git clone --depth 1 -b main https://github.com/jkpatelnx/devsecops-lms-app.git $MOODLE_CODE_FOLDER
 sudo chown -R www-data:www-data $MOODLE_CODE_FOLDER
 
 # Composer Install
