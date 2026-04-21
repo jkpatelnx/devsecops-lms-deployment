@@ -20,7 +20,6 @@ else
   # Added || true so it doesn't crash if the crontab is empty
   (sudo crontab -l 2>/dev/null || true; echo "$CRON_JOB") | sudo crontab -
 fi
-fi
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 BACKUP_ROOT="/opt/lms-backups"
