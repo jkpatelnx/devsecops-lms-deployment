@@ -11,8 +11,7 @@ else
 fi
 
 
-CRON_JOB="5/* * * * * /home/ubuntu/lms-backup.sh >> /home/ubuntu/backup.log 2>&1"
-
+CRON_JOB='5/* * * * * /home/ubuntu/lms-backup.sh >> /home/ubuntu/backup.log 2>&1'
 if sudo crontab -l 2>/dev/null | grep -Fq "/home/ubuntu/lms-backup.sh"; then
   echo "Cron job already exists, skipping..."
 else
