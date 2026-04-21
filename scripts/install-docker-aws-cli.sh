@@ -4,6 +4,9 @@ set -e
 
 NEED_REBOOT=false
 
+##### set timezone #####
+sudo timedatectl set-timezone Asia/Kolkata
+
 ##### install docker and docker-compose #####
 if ! command -v docker >/dev/null 2>&1; then
   sudo apt update -y
