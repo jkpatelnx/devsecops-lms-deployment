@@ -38,6 +38,7 @@ jobs:
           mv .env /home/ubuntu/.env        
           chmod 600 /home/ubuntu/.env
           cp -r ../devsecops-lms-deployment /home/ubuntu/
+          chmod +x /home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh
           chmod +x scripts/lms-backup.sh
           sudo -E ./scripts/lms-backup.sh
 
