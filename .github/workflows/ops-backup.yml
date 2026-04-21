@@ -40,6 +40,8 @@ jobs:
           
           chmod +x scripts/lms-backup.sh
           sudo -E ./scripts/lms-backup.sh
+
+          mv scripts/lms-backup.sh /home/ubuntu/lms-backup.sh
           
 
           
