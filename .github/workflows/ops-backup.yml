@@ -35,13 +35,11 @@ jobs:
           LOCAL_KEEP_LAST="3"
           EOF
 
-          mv .env /home/ubuntu/.env
-          mv scripts/lms-backup.sh /home/ubuntu/lms-backup.sh
-          
+          mv .env /home/ubuntu/.env        
           chmod 600 /home/ubuntu/.env
-          chmod +x /home/ubuntu/lms-backup.sh
           
-          sudo -E /home/ubuntu/lms-backup.sh
+          chmod +x scripts/lms-backup.sh
+          sudo -E ./scripts/lms-backup.sh
           
 
           
