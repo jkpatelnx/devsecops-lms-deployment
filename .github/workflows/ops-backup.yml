@@ -41,6 +41,7 @@ jobs:
           chmod 600 /home/ubuntu/.env
           chmod +x /home/ubuntu/lms-backup.sh
           
-          sudo -E bash -c "source /home/ubuntu/.env && /home/ubuntu/lms-backup.sh"
+          sudo -E ./home/ubuntu/lms-backup.sh
+          
 
           
