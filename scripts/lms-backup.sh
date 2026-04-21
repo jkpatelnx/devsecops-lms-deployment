@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+if [ -f /home/ubuntu/.env ]; then
+  set -a
+  source /home/ubuntu/.env
+  set +a
+else
+  echo "Warning: .env file not found, using defaults"
+fi
+
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 BACKUP_ROOT="/opt/lms-backups"
 TIMESTAMP="$(date +%F_%H-%M-%S)"
