@@ -8,8 +8,6 @@ on:
   #    - main
   #pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: "50 5 * * *"
   
 
 jobs:
@@ -43,6 +41,6 @@ jobs:
           chmod 600 /home/ubuntu/.env
           chmod +x /home/ubuntu/lms-backup.sh
           
-          #sudo -E ./scripts/lms-backup.sh
+          sudo -E bash -c "source /home/ubuntu/.env && /home/ubuntu/lms-backup.sh"
 
           
