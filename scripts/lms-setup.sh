@@ -31,11 +31,11 @@ sudo apt-get update && sudo apt upgrade -y
 # --- 2. Install PHP 8.3 and Extensions ---
 sudo apt-get install -y php8.3-fpm php8.3-cli php8.3-curl php8.3-zip php8.3-gd \
 php8.3-xml php8.3-intl php8.3-mbstring php8.3-xmlrpc php8.3-soap php8.3-bcmath \
-php8.3-exif php8.3-ldap php8.3-mysql
+php8.3-exif php8.3-ldap php8.3-mysql php8.3-redis
 
 # --- 3. Install Supporting Packages ---
 sudo apt-get install -y unzip mariadb-server mariadb-client ufw nano graphviz \
-aspell git clamav ghostscript composer
+aspell git clamav ghostscript composer redis-server
 
 ####################################################################
 # Install a Webserver
@@ -166,11 +166,24 @@ sudo find $MOODLE_CODE_FOLDER -type f -exec chmod 644 {} \;
 # Set slasharguments to false in config.php as requested
 sudo sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \$CFG->slasharguments = false;" $MOODLE_CODE_FOLDER/config.php
 
+# Configure Redis for session caching
+REDIS_PASSWORD=$(openssl rand -base64 12)
+echo "requirepass $REDIS_PASSWORD" | sudo tee -a /etc/redis/redis.conf > /dev/null
+echo "maxmemory 256mb" | sudo tee -a /etc/redis/redis.conf > /dev/null
+echo "maxmemory-policy allkeys-lru" | sudo tee -a /etc/redis/redis.conf > /dev/null
+sudo systemctl restart redis-server
+sudo systemctl enable redis-server
+
+sudo sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \$CFG->session_provider = 'redis';" $MOODLE_CODE_FOLDER/config.php
+sudo sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \$CFG->session_redis_host = '127.0.0.1';" $MOODLE_CODE_FOLDER/config.php
+sudo sed -i "/require_once(__DIR__ . '\/lib\/setup.php');/i \$CFG->session_redis_auth = '$REDIS_PASSWORD';" $MOODLE_CODE_FOLDER/config.php
+
 echo "------------------------------------------------------------"
 echo "Moodle installation completed successfully!"
 echo "URL: $PROTOCOL$WEBSITE_ADDRESS"
 echo "Admin Username: admin"
 echo "Admin Password: $MOODLE_ADMIN_PASSWORD"
 echo "Database Password: $MYSQL_MOODLEUSER_PASSWORD"
+echo "Redis Password: $REDIS_PASSWORD"
 echo "------------------------------------------------------------"
 echo "Remember to change the admin email and site name via the web UI."
