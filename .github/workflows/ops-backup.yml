@@ -29,6 +29,8 @@ jobs:
           DB_PASS="${{ secrets.DB_PASS }}"
           WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
           PROTOCOL="${{ secrets.PROTOCOL }}"
+          REDIS_HOST="${{ secrets.REDIS_HOST }}"
+          REDIS_PASSWORD="#{{ secrets.REDIS_PASSWORD }}"
           S3_BUCKET="${{ secrets.S3_BUCKET }}"
           S3_PREFIX="${{ secrets.S3_PREFIX }}"
           S3_KEEP_LAST="${{ secrets.S3_KEEP_LAST }}"
