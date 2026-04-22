@@ -42,6 +42,8 @@ jobs:
           export DB_PASS="${{ secrets.DB_PASS }}"
           export WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
           export PROTOCOL="${{ secrets.PROTOCOL }}"
+          export REDIS_HOST="${{ secrets.REDIS_HOST }}"
+          export REDIS_PASSWORD="#{{ secrets.REDIS_PASSWORD }}"
 
           ###### deploy with docker compose"
           
