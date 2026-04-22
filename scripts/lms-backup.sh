@@ -12,8 +12,8 @@ else
 fi
 
 
-#CRON_JOB='*/5 * * * * /home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh >> /home/ubuntu/backup.log 2>&1'
-CRON_JOB='*/5 * * * * /home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh'
+#CRON_JOB='0 3 * * * /home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh >> /home/ubuntu/backup.log 2>&1'
+CRON_JOB='0 3 * * * /home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh'
 if sudo crontab -l 2>/dev/null | grep -Fq "/home/ubuntu/devsecops-lms-deployment/scripts/lms-backup.sh"; then
   echo "Cron job already exists, skipping..."
 else
