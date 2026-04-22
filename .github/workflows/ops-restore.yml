@@ -43,6 +43,8 @@ jobs:
           export WEBSITE_ADDRESS="${{ secrets.WEBSITE_ADDRESS }}"
           export PROTOCOL="${{ secrets.PROTOCOL }}"
           export LOCAL_KEEP_LAST="3"
+          export REDIS_HOST="${{ secrets.REDIS_HOST }}"
+          export REDIS_PASSWORD="#{{ secrets.REDIS_PASSWORD }}"
           
           FOLDER=${LATEST_FILE#lms-backup-}
           FOLDER=${FOLDER%.tar.gz}
