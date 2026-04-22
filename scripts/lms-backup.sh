@@ -4,6 +4,7 @@ set -euo pipefail
 
 if [ -f /home/ubuntu/.env ]; then
   set -a
+  # shellcheck disable=SC1091
   source /home/ubuntu/.env
   set +a
 else
