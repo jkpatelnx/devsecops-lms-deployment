@@ -9,6 +9,8 @@ DB_HOST=${DB_HOST:-"lms-db"}
 DB_NAME=${DB_NAME:-"moodle"}
 DB_USER=${DB_USER:-"moodleuser"}
 DB_PASS=${DB_PASS:-"dbpassword!"}
+REDIS_HOST=${REDIS_HOST:-""}
+REDIS_PASSWORD=${REDIS_PASSWORD:-""}
 WEBSITE_ADDRESS=${WEBSITE_ADDRESS:-"localhost"}
 PROTOCOL=${PROTOCOL:-"http://"}
 
@@ -99,6 +101,14 @@ while ! mysqladmin ping -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" --silent; do
 done
 echo "Database is awake and reachable!"
 
+if [ -n "$REDIS_HOST" ] && [ -n "$REDIS_PASSWORD" ]; then
+    echo "Waiting for Redis Cache ($REDIS_HOST) to wake up..."
+    while ! php -r "\$r = new Redis(); \$r->connect('$REDIS_HOST', 6379); \$r->auth('$REDIS_PASSWORD'); echo \$r->ping();" > /dev/null 2>&1; do
+        sleep 2
+    done
+    echo "Redis is awake and reachable!"
+fi
+
 # 4. Handle Moodle Install
 # We check if Moodle's tables exist already.
 if ! mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "USE $DB_NAME; SHOW TABLES LIKE 'mdl_config';" | grep -q "mdl_config"; then
@@ -159,6 +169,13 @@ if [ -f "$MOODLE_CODE_FOLDER/config.php" ]; then
     # Standard TLS termination at the edge proxy only needs sslproxy.
     # Moodle's reverseproxy mode is for more specialised proxy/load-balancer setups.
     set_cfg_bool "reverseproxy" "false" "$MOODLE_CODE_FOLDER/config.php"
+
+    if [ -n "$REDIS_HOST" ] && [ -n "$REDIS_PASSWORD" ]; then
+        echo "Configuring Redis session caching..."
+        set_cfg_string "session_provider" "redis" "$MOODLE_CODE_FOLDER/config.php"
+        set_cfg_string "session_redis_host" "$REDIS_HOST" "$MOODLE_CODE_FOLDER/config.php"
+        set_cfg_string "session_redis_auth" "$REDIS_PASSWORD" "$MOODLE_CODE_FOLDER/config.php"
+    fi
 fi
 
 # 5. Repair ownership & permissions (always, not just on fresh install)

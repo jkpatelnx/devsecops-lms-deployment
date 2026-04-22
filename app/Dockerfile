@@ -37,7 +37,7 @@ RUN apt-get update && apt-get upgrade -y && \
     mariadb-client nginx sudo cron \
     php8.3-fpm php8.3-cli php8.3-curl php8.3-zip php8.3-gd \
     php8.3-xml php8.3-intl php8.3-mbstring php8.3-xmlrpc \
-    php8.3-soap php8.3-bcmath php8.3-exif php8.3-ldap php8.3-mysql && \
+    php8.3-soap php8.3-bcmath php8.3-exif php8.3-ldap php8.3-mysql php8.3-redis && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 2. Securely copy the fully compiled Moodle repository from the Builder stage

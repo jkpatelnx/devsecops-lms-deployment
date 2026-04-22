@@ -21,6 +21,19 @@ services:
       MYSQL_PASSWORD: "${DB_PASS}"
 
   # ####################################################################
+  # REDIS CACHE SERVICE
+  # ####################################################################
+  lms-redis:
+    image: redis:7-alpine
+    container_name: lms-redis
+    restart: unless-stopped
+    command: redis-server --requirepass "${REDIS_PASSWORD}" --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - lms-prod-net
+    volumes:
+      - lms-redis-volume:/data
+
+  # ####################################################################
   # WEB APPLICATION SERVICE
   # ####################################################################
   lms-web:
@@ -37,11 +50,14 @@ services:
       - lms-moodle-code-volume:/var/www/html/sites/moodle
     depends_on:
       - lms-db 
+      - lms-redis
     environment:
       DB_HOST: "lms-db"
       DB_NAME: "${DB_NAME}"
       DB_USER: "${DB_USER}"
       DB_PASS: "${DB_PASS}"
+      REDIS_HOST: "${REDIS_HOST:-lms-redis}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
       WEBSITE_ADDRESS: "${WEBSITE_ADDRESS}"
       PROTOCOL: "${PROTOCOL}"
 
@@ -77,3 +93,4 @@ volumes:
   lms-moodle-data-volume:
   lms-moodle-code-volume:
   lms-proxy-certs-volume:
+  lms-redis-volume:
