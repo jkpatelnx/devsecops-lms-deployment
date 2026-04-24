@@ -85,7 +85,7 @@ services:
   # NODE EXPORTER FOR SYSTEM METRICS (FOR PROMETHEUS)
   # ####################################################################
   lms-node-exporter:
-    image: prom/node-exporter:v1.8.1
+    image: prom/node-exporter:v1.11.1
     container_name: lms-node-exporter
     restart: unless-stopped
     ports:
