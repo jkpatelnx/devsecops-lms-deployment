@@ -1,0 +1,36 @@
+# monitoring-setup.yml
+
+name: "Ops / Monitoring Bootstrap"
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  workflow_dispatch:
+
+jobs:
+  setup-monitoring:
+    name: "Install Prometheus and Grafana via Docker Compose"
+    runs-on: [self-hosted, monitoring]
+  
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+  
+      - name: "deploy with docker compose for monotring"
+        run: |
+          export GRAFANA_ADMIN_PASSWORD="${{ secrets.GRAFANA_ADMIN_PASSWORD }}"
+          export GRAFANA_SMTP_ENABLED="true"
+          export GRAFANA_SMTP_HOST="smtp.gmail.com:587"
+          export GRAFANA_SMTP_USER="${{ secrets.GRAFANA_SMTP_USER }}"
+          export GRAFANA_SMTP_PASSWORD="${{ secrets.GRAFANA_SMTP_PASSWORD }}" 
+          export GRAFANA_SMTP_FROM_ADDRESS="${{ secrets.GRAFANA_SMTP_FROM_ADDRESS }}" 
+          export GRAFANA_SMTP_FROM_NAME="Grafana"
+          export GRAFANA_ALERT_RECEIVER_EMAIL="${{ secrets.GRAFANA_ALERT_RECEIVER_EMAIL }}"
+          export APP_EC2_IP="${{ secrets.APP_EC2_IP }}"
+  
+          docker compose -f monitoring/docker-compose.yml down
+          docker compose -f monitoring/docker-compose.yml up -d --force-recreate --pull always
+  
+      
