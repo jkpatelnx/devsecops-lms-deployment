@@ -14,7 +14,7 @@ jobs:
 
   deply:
     name: "Deploy to EC2 Production"
-    runs-on: self-hosted
+    runs-on: [self-hosted, lms-deployment-prod]
 
     steps:
     
