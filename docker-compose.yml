@@ -81,6 +81,16 @@ services:
     volumes:
       - lms-proxy-certs-volume:/etc/nginx/certs
 
+  # ####################################################################
+  # NODE EXPORTER FOR SYSTEM METRICS (FOR PROMETHEUS)
+  # ####################################################################
+  lms-node-exporter:
+    image: prom/node-exporter:v1.8.1
+    container_name: lms-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+
 #####################################################################
 # EXPLICIT INFRASTRUCTURE DECLARATIONS
 #####################################################################
