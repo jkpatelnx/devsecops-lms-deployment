@@ -1,0 +1,19 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: 'Email Alerts'
+    receivers:
+      - uid: email-receiver
+        type: email
+        settings:
+          # This dynamically uses the environment variable injected from .env via docker-compose
+          addresses: ${GRAFANA_ALERT_RECEIVER_EMAIL}
+          singleEmail: true
+
+policies:
+  - orgId: 1
+    # This policy sends ALL alerts directly to the 'Email Alerts' contact point by default
+    receiver: 'Email Alerts'
+    group_by: ['grafana_folder', 'alertname']
+    #repeat_interval: 4h
