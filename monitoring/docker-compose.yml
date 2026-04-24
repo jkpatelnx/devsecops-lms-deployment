@@ -34,7 +34,7 @@ services:
       - '--storage.tsdb.wal-compression'
       - '--web.enable-lifecycle'
     mem_limit: 400m
-    cpus: 0.5
+    #cpus: 0.5
 
   # ####################################################################
   # GRAFANA FOR DASHBOARDS AND VISUALIZATION
@@ -62,7 +62,7 @@ services:
     depends_on:
       - prometheus
     mem_limit: 300m
-    cpus: 0.4
+    #cpus: 0.4
 
 volumes:
   prometheus_data:
