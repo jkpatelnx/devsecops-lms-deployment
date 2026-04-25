@@ -11,6 +11,11 @@ services:
     restart: unless-stopped
     ports:
       - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+    pid: host
 
   # ####################################################################
   # PROMETHEUS FOR METRICS COLLECTION AND STORAGE
