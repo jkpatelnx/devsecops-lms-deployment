@@ -1,0 +1,17 @@
+# GitHub Linguist overrides for consistent language detection
+
+# Shell scripts
+*.sh linguist-language=Shell
+
+# Dockerfiles
+Dockerfile linguist-language=Dockerfile
+**/Dockerfile linguist-language=Dockerfile
+
+# YAML (including GitHub Actions workflows)
+*.yml linguist-language=YAML
+*.yaml linguist-language=YAML
+.github/workflows/*.yml linguist-language=YAML
+
+# Other tracked text formats used in this repository
+*.json linguist-language=JSON
+*.drawio linguist-language=XML
