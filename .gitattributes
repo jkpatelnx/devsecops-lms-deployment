@@ -1,17 +1,23 @@
-# GitHub Linguist overrides for consistent language detection
+# GitHub Linguist overrides for DevSecOps repositories
 
-# Shell scripts
-*.sh linguist-language=Shell
+# Count YAML
+*.yml linguist-detectable=true
+*.yaml linguist-detectable=true
+.github/workflows/*.yml linguist-detectable=true
+.github/workflows/*.yaml linguist-detectable=true
 
-# Dockerfiles
-Dockerfile linguist-language=Dockerfile
-**/Dockerfile linguist-language=Dockerfile
+# Count JSON
+*.json linguist-detectable=true
 
-# YAML (including GitHub Actions workflows)
-*.yml linguist-language=YAML
-*.yaml linguist-language=YAML
-.github/workflows/*.yml linguist-language=YAML
+# Count Dockerfiles
+Dockerfile linguist-detectable=true
+**/Dockerfile linguist-detectable=true
 
-# Other tracked text formats used in this repository
-*.json linguist-language=JSON
-*.drawio linguist-language=XML
+# Count Shell
+*.sh linguist-detectable=true
+
+# Ignore docs from language stats
+*.md linguist-documentation=true
+
+# Ignore draw.io generated XML from stats
+*.drawio linguist-generated=true
