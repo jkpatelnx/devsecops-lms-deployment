@@ -6,9 +6,6 @@
 .github/workflows/*.yml linguist-detectable=true
 .github/workflows/*.yaml linguist-detectable=true
 
-# Count JSON
-*.json linguist-detectable=true
-
 # Count Dockerfiles
 Dockerfile linguist-detectable=true
 **/Dockerfile linguist-detectable=true
