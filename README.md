@@ -29,7 +29,7 @@ It focuses on:
 ## Architecture
 
 <p align="center">
-  <img src="docs/assets/architecture.gif" alt="Architecture Diagram" width="85%" />
+  <img src="docs/assets/architecture.gif" alt="Architecture Diagram" width="100%" />
 </p>
 
 Diagram source: `docs/diagrams/architecture.drawio`
