@@ -11,9 +11,7 @@
   Containerized Moodle LMS deployment on AWS with CI/CD, security scans, observability, and backup/restore automation.
 </p>
 
-<p align="center">
-  <a href="https://learn.jkpatelnx.in"><strong>Live Demo</strong></a>
-</p>
+<p align="center"> <a href="https://learn.jkpatelnx.in"><strong>Live Demo</strong></a> · <a href="https://learn.jkpatelnx.in/login/index.php"><strong>Login Page</strong></a> </p>
 
 ## Why This Project
 
